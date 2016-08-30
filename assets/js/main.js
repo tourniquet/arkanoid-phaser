@@ -1,3 +1,5 @@
+/* globals Phaser */
+
 let gameState = {
   preload () {
     game.load.image('paddle', 'assets/images/paddle.png')
@@ -14,7 +16,7 @@ let gameState = {
     game.world.enableBody = true
 
     // create paddle, and set collide with world margin
-    this.paddle = game.add.sprite(400, 400, 'paddle')
+    this.paddle = game.add.sprite(400, 800, 'paddle')
     this.paddle.anchor.setTo(0.5, 0.5)
     game.physics.enable(this.paddle)
     this.paddle.body.collideWorldBounds = true
@@ -52,22 +54,23 @@ let gameState = {
     game.physics.arcade.collide(this.ball, this.bricks, this.hit, null, this)
 
     if (this.cursors.left.isDown) {
-      this.paddle.body.velocity.x = -150
+      this.paddle.body.velocity.x = -250
     } else if (this.cursors.right.isDown) {
-      this.paddle.body.velocity.x = 150
+      this.paddle.body.velocity.x = 250
     } else {
       this.paddle.body.velocity.x = 0
     }
 
-    // if (this.ball.y > this.paddle.y) {
-    //   game.state.start('gameState')
-    // }
+    // kill the ball if player not hit them
+    if (this.ball.y > this.paddle.y - 50) {
+      this.ball.kill()
+    }
   },
   hit (ball, brick) {
     brick.kill()
   }
 }
 
-let game = new Phaser.Game(800, 400, Phaser.AUTO)
+let game = new Phaser.Game(400, 800, Phaser.AUTO)
 game.state.add('gameState', gameState)
 game.state.start('gameState')
