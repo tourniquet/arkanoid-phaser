@@ -1,11 +1,6 @@
-/* globals Phaser */
+/* globals game, Phaser */
 
-let gameState = {
-  preload () {
-    game.load.image('paddle', 'assets/images/paddle.png')
-    game.load.image('brick', 'assets/images/brick.png')
-    game.load.image('ball', 'assets/images/ball.png')
-  },
+let playState = {
   create () {
     // set game background color to black
     game.stage.backgroundColor = '#000'
@@ -70,7 +65,3 @@ let gameState = {
     brick.kill()
   }
 }
-
-let game = new Phaser.Game(400, 800, Phaser.AUTO)
-game.state.add('gameState', gameState)
-game.state.start('gameState')
