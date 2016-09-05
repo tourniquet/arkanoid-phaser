@@ -26,6 +26,17 @@ let playState = {
     this.ball.body.bounce.setTo(1)
     this.ball.body.collideWorldBounds = true
 
+    // add sounds
+    this.paddleTouch = game.add.audio('paddleTouch')
+    this.brickDestroy = game.add.audio('brickDestroy')
+    this.gameOver = game.add.audio('gameOver')
+
+    // add background music
+    this.music = game.add.audio('bgMusic')
+    this.music.loop = true
+    this.music.volume = 0.2
+    this.music.play()
+
     // add bricks
     this.bricks = game.add.group()
     for (let i = 0; i < 5; i++) {
@@ -36,12 +47,17 @@ let playState = {
       }
     }
 
+    this.scoreLabel = game.add.text(
+      20, 20, 'score: 0',
+      { font: '20px Arial', fill: '#ffffff' }
+    )
+
+    game.global.score = 0
+
     // create cursors
     this.cursors = game.input.keyboard.createCursorKeys()
   },
   update () {
-    // this.paddle.body.velocity.x = 0
-
     // add collisions between the paddle and the ball
     game.physics.arcade.collide(this.paddle, this.ball)
 
@@ -59,9 +75,21 @@ let playState = {
     // kill the ball if player not hit them
     if (this.ball.y > this.paddle.y - 50) {
       this.ball.kill()
+      // stop the music
+      this.music.stop()
+      // play a sound when user lose the game
+      this.gameOver.play()
+      game.state.start('gameOver')
     }
   },
   hit (ball, brick) {
+    // play sound every time when ball destroy a brick
+    this.brickDestroy.play()
+
     brick.kill()
+
+    // increase our score by 5
+    game.global.score += 5
+    this.scoreLabel.text = `score: ${game.global.score}`
   }
 }
