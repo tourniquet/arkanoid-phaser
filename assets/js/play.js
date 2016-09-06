@@ -7,6 +7,8 @@ let playState = {
 
     // set arcade physics
     game.physics.startSystem(Phaser.Physics.ARCADE)
+    // We check bounds collisions against all walls other than the bottom one
+    game.physics.arcade.checkCollision.down = false
     // add the physics engine to all the game objetcs
     game.world.enableBody = true
 
@@ -17,14 +19,17 @@ let playState = {
     this.paddle.body.collideWorldBounds = true
     this.paddle.body.immovable = true
 
-    // create ball
-    this.ball = game.add.sprite(200, 300, 'ball')
-    // give the ball some initial speed
-    this.ball.body.velocity.y = 200
-    this.ball.body.velocity.x = 200
-    // make sure the ball will bounce when hitting something
-    this.ball.body.bounce.setTo(1)
-    this.ball.body.collideWorldBounds = true
+    // call createBall function
+    this.createBall()
+
+    // lives count
+    this.lives = 3
+
+    // add lives label
+    this.livesLabel = game.add.text(
+      290, 20, 'lives: 3',
+      { font: '20px Arial', fill: '#ffffff' }
+    )
 
     // add sounds
     this.paddleTouch = game.add.audio('paddleTouch')
@@ -59,10 +64,10 @@ let playState = {
   },
   update () {
     // add collisions between the paddle and the ball
-    game.physics.arcade.collide(this.paddle, this.ball)
+    game.physics.arcade.collide(this.paddle, this.ball, this.hitPaddle, null, this)
 
-    // call the 'hit' function when the ball hits a brick
-    game.physics.arcade.collide(this.ball, this.bricks, this.hit, null, this)
+    // call the 'hitBrick' function when the ball hits a brick
+    game.physics.arcade.collide(this.ball, this.bricks, this.hitBrick, null, this)
 
     if (this.cursors.left.isDown) {
       this.paddle.body.velocity.x = -250
@@ -71,25 +76,53 @@ let playState = {
     } else {
       this.paddle.body.velocity.x = 0
     }
-
-    // kill the ball if player not hit them
-    if (this.ball.y > this.paddle.y - 50) {
-      this.ball.kill()
-      // stop the music
-      this.music.stop()
-      // play a sound when user lose the game
-      this.gameOver.play()
-      game.state.start('gameOver')
-    }
   },
-  hit (ball, brick) {
+  createBall () {
+    // create ball
+    this.ball = game.add.sprite(200, 300, 'ball')
+    // give the ball some initial speed
+    this.ball.body.velocity.y = 200
+    this.ball.body.velocity.x = 200
+    // make sure the ball will bounce when hitting something
+    this.ball.body.bounce.setTo(1)
+    this.ball.body.collideWorldBounds = true
+    this.ball.checkWorldBounds = true
+    // when ball is lost, call ballLost function
+    this.ball.events.onOutOfBounds.add(this.ballLost, this)
+  },
+  hitBrick (ball, brick) { // rename to hit brick
     // play sound every time when ball destroy a brick
     this.brickDestroy.play()
-
+    // destroy hit brick
     brick.kill()
 
     // increase our score by 5
     game.global.score += 5
     this.scoreLabel.text = `score: ${game.global.score}`
+  },
+  hitPaddle () {
+    // when ball hit paddle, play sound
+    this.paddleTouch.play()
+  },
+  ballLost () {
+    if (this.ball.y > this.paddle.y - 50) {
+      // kill the ball if player not hit them
+      this.ball.kill()
+
+      // if user lost ball, decrement lives variable
+      this.lives--
+      this.livesLabel.text = `lives: ${this.lives}`
+
+      if (!this.lives) {
+        // stop the music
+        this.music.stop()
+        // play a sound when user lose the game
+        this.gameOver.play()
+        // call game over state
+        game.state.start('gameOver')
+      } else {
+        this.createBall()
+      }
+    }
   }
 }
