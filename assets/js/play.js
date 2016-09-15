@@ -36,21 +36,26 @@ let playState = {
     this.brickDestroy = game.add.audio('brickDestroy')
     this.gameOver = game.add.audio('gameOver')
 
-    // add background music
-    this.music = game.add.audio('bgMusic')
-    this.music.loop = true
-    this.music.volume = 0.2
-    this.music.play()
-
     // add bricks
-    this.bricks = game.add.group()
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 5; j++) {
-        let brick = game.add.sprite(55 + i * 60, 55 + j * 35, 'brick')
-        brick.body.immovable = true
-        this.bricks.add(brick)
-      }
-    }
+    // this.bricks = game.add.group()
+    // for (let i = 0; i < 5; i++) {
+    //   for (let j = 0; j < 5; j++) {
+    //     let brick = game.add.sprite(55 + i * 60, 55 + j * 35, 'brick')
+    //     brick.body.immovable = true
+    //     this.bricks.add(brick)
+    //   }
+    // }
+
+    // create the tilemap
+    this.map = game.add.tilemap('map')
+    // add the tileset to the map
+    this.map.addTilesetImage('block')
+    // create the layer, by specifying the name of the Tiled layer
+    this.layer = this.map.createLayer('Tile Layer 1')
+    // set the world size to match the size of the layer
+    this.layer.resizeWorld()
+    // enable collisions for the block
+    this.map.setCollision(1)
 
     this.scoreLabel = game.add.text(
       20, 20, 'score: 0',
@@ -67,7 +72,7 @@ let playState = {
     game.physics.arcade.collide(this.paddle, this.ball, this.hitPaddle, null, this)
 
     // call the 'hitBrick' function when the ball hits a brick
-    game.physics.arcade.collide(this.ball, this.bricks, this.hitBrick, null, this)
+    game.physics.arcade.collide(this.ball, this.layer, this.hitBrick, null, this)
 
     if (this.cursors.left.isDown) {
       this.paddle.body.velocity.x = -250
@@ -86,6 +91,7 @@ let playState = {
     // make sure the ball will bounce when hitting something
     this.ball.body.bounce.setTo(1)
     this.ball.body.collideWorldBounds = true
+    // this check if ball it is within world every frame
     this.ball.checkWorldBounds = true
     // when ball is lost, call ballLost function
     this.ball.events.onOutOfBounds.add(this.ballLost, this)
@@ -94,7 +100,7 @@ let playState = {
     // play sound every time when ball destroy a brick
     this.brickDestroy.play()
     // destroy hit brick
-    brick.kill()
+    brick.destroy()
 
     // increase our score by 5
     game.global.score += 5
