@@ -1,6 +1,6 @@
 /* globals Phaser */
 
-let game = new Phaser.Game(400, 800, Phaser.AUTO)
+let game = new Phaser.Game(400, 600, Phaser.AUTO)
 
 game.global = {
   score: 0

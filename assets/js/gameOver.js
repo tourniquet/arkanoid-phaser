@@ -11,15 +11,13 @@ let gameOver = {
 
     // explain how to restart the game
     let restartGame = game.add.text(
-      game.world.centerX, 400, 'press enter to restart',
+      game.world.centerX, 400, 'click to restart the game',
       { font: '20px Arial', fill: '#ffffff' }
     )
     restartGame.anchor.setTo(0.5, 0.5)
 
-   // create Phaser keyboard hotkey
-    let enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER)
-    // start game on press enter
-    enterKey.onDown.addOnce(this.startGame, this)
+    // click to start game
+    game.input.onDown.add(this.startGame, this)
   },
   startGame () {
     game.state.start('play')
