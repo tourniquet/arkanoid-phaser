@@ -2,8 +2,8 @@
 
 let playState = {
   create () {
-    // set game background color to black
-    game.stage.backgroundColor = '#000'
+    // set game background image
+    game.add.image(0, 0, 'background')
 
     // set arcade physics
     game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -38,14 +38,14 @@ let playState = {
 
     // create the tilemap
     this.map = game.add.tilemap('map')
+    this.map.addTilesetImage('tileset')
     // create the layer, by specifying the name of the Tiled layer
     this.layer = this.map.createLayer('Tile Layer 1')
 
     this.blocks = game.add.group()
-    this.map.createFromTiles(1, 0, 'block', this.layer.index, this.blocks)
+    // for index '2' we have empty/transparent tile, which will replace destroyed block
+    this.map.createFromTiles(1, 2, 'tileset', this.layer.index, this.blocks)
     game.physics.enable(this.blocks)
-    // this.blocks.enableBody = true
-    // this.blocks.setAll('enableBody', true)
     this.blocks.setAll('body.immovable', true)
 
     this.scoreLabel = game.add.text(
@@ -97,7 +97,7 @@ let playState = {
     this.scoreLabel.text = `score: ${game.global.score}`
 
     // destroy block
-    block.destroy()
+    block.kill()
   },
   hitPaddle () {
     // when ball hit paddle, play sound
@@ -123,8 +123,9 @@ let playState = {
         this.createBall()
       }
     }
-  },
-  render () {
-    game.debug.spriteInfo(this.ball, 50, 370)
   }
+  // ,
+  // render () {
+  //   game.debug.spriteInfo(this.ball, 50, 370)
+  // }
 }

@@ -1,4 +1,4 @@
-/* globals game, Phaser */
+/* globals game */
 
 let menuState = {
   create () {
