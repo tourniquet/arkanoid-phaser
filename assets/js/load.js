@@ -9,7 +9,7 @@ let loadState = {
     game.load.tilemap('map', 'assets/images/map.json', null, Phaser.Tilemap.TILED_JSON)
     // load game image assets
     game.load.image('paddle', 'assets/images/paddle.png')
-    // game.load.image('brick', 'assets/images/brick.png')
+    game.load.image('block', 'assets/images/block.png')
     game.load.image('ball', 'assets/images/ball.png')
     // load game audio assets
     game.load.audio('paddleTouch', ['assets/audio/paddle.mp3', 'assets/audio/paddle.ogg'])

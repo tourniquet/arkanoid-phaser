@@ -44,7 +44,7 @@ let playState = {
 
     this.blocks = game.add.group()
     // for index '2' we have empty/transparent tile, which will replace destroyed block
-    this.map.createFromTiles(1, 2, 'tileset', this.layer.index, this.blocks)
+    this.map.createFromTiles(1, 2, 'block', this.layer.index, this.blocks)
     game.physics.enable(this.blocks)
     this.blocks.setAll('body.immovable', true)
 
